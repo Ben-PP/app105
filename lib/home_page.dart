@@ -6,6 +6,7 @@ import './appbar_actions/status_icon_lights.dart';
 import './appbar_actions/status_icon_temp.dart';
 import './widgets/door_controls.dart';
 import './widgets/light_controls.dart';
+import './side_drawer.dart';
 
 /// Home page
 class HomePage extends StatefulWidget {
@@ -21,6 +22,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: const Text('Home'),
         actions: const [
           StatusIconServer(),
           DoorStatusIcon(),
@@ -28,6 +30,7 @@ class _HomePageState extends State<HomePage> {
           StatusIconTemperature(),
         ],
       ),
+      drawer: const SideDrawer(),
       body: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,

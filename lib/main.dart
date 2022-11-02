@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import './home_page.dart';
+import './settings/settings_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +19,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.pink,
       ),
-      home: const HomePage(),
+      routes: {
+        '/': (context) => const HomePage(),
+        SettingsPage.routeName: ((context) => const SettingsPage()),
+      },
     );
   }
 }
