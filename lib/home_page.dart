@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
-import './appbar_actions/status_icon_server.dart';
-import './appbar_actions/status_icon_door.dart';
-import './appbar_actions/status_icon_lights.dart';
-import './appbar_actions/status_icon_temp.dart';
+import './globals.dart';
 import './side_drawer.dart';
+import './budget/budget_page.dart';
 
 /// Home page
 class HomePage extends StatefulWidget {
@@ -16,37 +14,63 @@ class HomePage extends StatefulWidget {
 
 /// State for home page
 class _HomePageState extends State<HomePage> {
-  final List<Widget> tabs = [
-    // TODO Implement home page
-    // TODO Implement budjet page
+  final List<Map<String, dynamic>> tabs = [
     // TODO Implement shopping list
+    {
+      'widget': Container(),
+      'title': 'Shop',
+    },
+    // TODO Implement budjet page
+    {
+      'widget': const BudgetPage(),
+      'title': BudgetPage.appBarTitle,
+    },
+    // TODO Implement home page
+    {
+      'widget': Container(),
+      'title': 'Home',
+    },
     // TODO Implement TODO list
+    {
+      'widget': Container(),
+      'title': 'TODO',
+    },
     // TODO Implement monitoring page
-    Container(),
-    Container(),
-    Container(),
-    Container(),
-    Container(),
+    {
+      'widget': Container(),
+      'title': 'Monitor',
+    },
   ];
-  var currentIndex = 0;
+
+  late final double screenHeight;
+  var currentIndex = 2;
+  var isInitialized = false;
+
+  @override
+  void didChangeDependencies() {
+    if (!isInitialized) {
+      screenHeight = MediaQuery.of(context).size.height -
+          MediaQuery.of(context).viewPadding.top;
+
+      isInitialized = true;
+    }
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        title: const Text('Home'),
-        actions: const [
-          StatusIconServer(),
-          DoorStatusIcon(),
-          StatusIconLights(),
-          StatusIconTemperature(),
-        ],
+        toolbarHeight: screenHeight * SizesGlobal.appBarHeight,
+        title: Text((tabs[currentIndex]['title'])),
+        centerTitle: true,
       ),
       drawer: const SideDrawer(),
-      body: tabs[currentIndex],
+      body: tabs[currentIndex]['widget'],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
-        selectedItemColor: Colors.red,
+        selectedItemColor: Theme.of(context).colorScheme.secondary,
         onTap: (index) {
           setState(() {
             currentIndex = index;

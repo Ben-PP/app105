@@ -16,16 +16,16 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'App105',
       theme: ThemeData(
-        colorScheme: const ColorScheme(
-          primary: Colors.pink,
-          onPrimary: Colors.white,
-          secondary: Colors.purple,
+        colorScheme: ColorScheme(
+          primary: Colors.white,
+          onPrimary: Colors.purple,
+          secondary: Colors.teal.shade700,
           onSecondary: Colors.white,
-          background: Colors.grey,
+          background: Colors.white,
           onBackground: Colors.white,
           error: Colors.red,
           onError: Colors.white,
-          surface: Colors.green,
+          surface: Colors.purple,
           onSurface: Colors.white,
           brightness: Brightness.light,
         ),
