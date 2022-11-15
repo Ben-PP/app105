@@ -4,8 +4,6 @@ import './appbar_actions/status_icon_server.dart';
 import './appbar_actions/status_icon_door.dart';
 import './appbar_actions/status_icon_lights.dart';
 import './appbar_actions/status_icon_temp.dart';
-import './widgets/door_controls.dart';
-import './widgets/light_controls.dart';
 import './side_drawer.dart';
 
 /// Home page
@@ -18,6 +16,20 @@ class HomePage extends StatefulWidget {
 
 /// State for home page
 class _HomePageState extends State<HomePage> {
+  final List<Widget> tabs = [
+    // TODO Implement home page
+    // TODO Implement budjet page
+    // TODO Implement shopping list
+    // TODO Implement TODO list
+    // TODO Implement monitoring page
+    Container(),
+    Container(),
+    Container(),
+    Container(),
+    Container(),
+  ];
+  var currentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,28 +43,35 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       drawer: const SideDrawer(),
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              LightControls(),
-              DoorControls(),
-            ],
+      body: tabs[currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentIndex,
+        selectedItemColor: Colors.red,
+        onTap: (index) {
+          setState(() {
+            currentIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: 'Shopping',
           ),
-          const Padding(
-            padding: EdgeInsets.only(top: 20, left: 20),
-            child: Text(
-              'Actions',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.euro),
+            label: 'Budget',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list_alt_rounded),
+            label: 'TODO',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.monitor_heart),
+            label: 'Monitor',
           ),
         ],
       ),
