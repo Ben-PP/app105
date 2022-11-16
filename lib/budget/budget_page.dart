@@ -44,7 +44,7 @@ class _BudgetPageState extends State<BudgetPage> {
             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
             child: Column(
               children: [
-                const Text('0'),
+                const Text('Balance'),
                 Container(
                   color: Colors.black,
                   height: 10,
@@ -52,12 +52,14 @@ class _BudgetPageState extends State<BudgetPage> {
                 ),
                 Container(
                   width: screenWidth * 0.9,
-                  height: screenHeight * 0.1,
+                  height: screenHeight * 0.05,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
                     color: Colors.grey,
                   ),
                   clipBehavior: Clip.hardEdge,
+                  // TODO Implement the balance bar
+                  // TODO Add saving target
                   child: Stack(
                     children: [
                       Container(
@@ -73,6 +75,117 @@ class _BudgetPageState extends State<BudgetPage> {
                   height: 10,
                   width: 2,
                 ),
+                const Text('0€'),
+
+                // Static transactions
+                const Text('Monthly budget'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // Income
+                    SizedBox(
+                      width: screenWidth * 0.3,
+                      child: Column(
+                        children: [
+                          const Text('Income'),
+                          TextField(
+                            keyboardType: TextInputType.number,
+                            textAlign: TextAlign.center,
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.all(2),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.black,
+                                  width: 1,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.black,
+                                  width: 1,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Expenses
+                    SizedBox(
+                      width: screenWidth * 0.3,
+                      child: Column(
+                        children: [
+                          const Text('Expenses'),
+                          TextField(
+                            keyboardType: TextInputType.number,
+                            textAlign: TextAlign.center,
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.all(2),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.black,
+                                  width: 1,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.black,
+                                  width: 1,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                      Theme.of(context).colorScheme.secondary,
+                    ),
+                  ),
+                  onPressed: () {
+                    // TODO Save income/expenses
+                  },
+                  child: Text(
+                    'Save Income/Expenses',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSecondary,
+                    ),
+                  ),
+                ),
+
+                // TODO Add ability to add quick transactions
+                // Saved transactions
+                const Text('Quick Transactions'),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                        Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+                    onPressed: () {
+                      // TODO Manage quick transactions
+                    },
+                    child: Text(
+                      'Manage',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSecondary,
+                      ),
+                    ),
+                  ),
+                ),
+                // TODO Add gridview for quick transactions
+                //      Separate expenses and incomes.
+                // TODO Add list of transactions
               ],
             ),
           ),

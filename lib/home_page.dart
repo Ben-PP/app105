@@ -14,33 +14,7 @@ class HomePage extends StatefulWidget {
 
 /// State for home page
 class _HomePageState extends State<HomePage> {
-  final List<Map<String, dynamic>> tabs = [
-    // TODO Implement shopping list
-    {
-      'widget': Container(),
-      'title': 'Shop',
-    },
-    // TODO Implement budjet page
-    {
-      'widget': const BudgetPage(),
-      'title': BudgetPage.appBarTitle,
-    },
-    // TODO Implement home page
-    {
-      'widget': Container(),
-      'title': 'Home',
-    },
-    // TODO Implement TODO list
-    {
-      'widget': Container(),
-      'title': 'TODO',
-    },
-    // TODO Implement monitoring page
-    {
-      'widget': Container(),
-      'title': 'Monitor',
-    },
-  ];
+  late final List<Map<String, dynamic>> tabs;
 
   late final double screenHeight;
   var currentIndex = 2;
@@ -49,6 +23,45 @@ class _HomePageState extends State<HomePage> {
   @override
   void didChangeDependencies() {
     if (!isInitialized) {
+      tabs = [
+        // TODO Implement shopping list
+        {
+          'widget': Container(),
+          'title': 'Shop',
+          'actions': <IconButton>[],
+        },
+        // TODO Implement budjet page
+        {
+          'widget': const BudgetPage(),
+          'title': BudgetPage.appBarTitle,
+          'actions': <IconButton>[
+            IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.settings,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ))
+          ],
+        },
+        // TODO Implement home page
+        {
+          'widget': Container(),
+          'title': 'Home',
+          'actions': <IconButton>[],
+        },
+        // TODO Implement TODO list
+        {
+          'widget': Container(),
+          'title': 'TODO',
+          'actions': <IconButton>[],
+        },
+        // TODO Implement monitoring page
+        {
+          'widget': Container(),
+          'title': 'Monitor',
+          'actions': <IconButton>[],
+        },
+      ];
       screenHeight = MediaQuery.of(context).size.height -
           MediaQuery.of(context).viewPadding.top;
 
@@ -65,6 +78,7 @@ class _HomePageState extends State<HomePage> {
         toolbarHeight: screenHeight * SizesGlobal.appBarHeight,
         title: Text((tabs[currentIndex]['title'])),
         centerTitle: true,
+        actions: tabs[currentIndex]['actions'],
       ),
       drawer: const SideDrawer(),
       body: tabs[currentIndex]['widget'],
