@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import './globals.dart';
 import './side_drawer.dart';
@@ -36,7 +37,16 @@ class _HomePageState extends State<HomePage> {
           'title': BudgetPage.appBarTitle,
           'actions': <IconButton>[
             IconButton(
-                onPressed: () {},
+                onPressed: () async {
+                  var url = Uri.http(
+                    '172.16.160.15:8000',
+                    '/psql',
+                    {'table': 'table3'},
+                  );
+                  var response = await http.get(url);
+                  print(url);
+                  print('${response.statusCode}: ${response.reasonPhrase}');
+                },
                 icon: Icon(
                   Icons.settings,
                   color: Theme.of(context).colorScheme.onPrimary,
