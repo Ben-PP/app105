@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../settings/settings_page.dart';
+
 class SideDrawer extends StatelessWidget {
   const SideDrawer({super.key});
 
@@ -35,11 +37,12 @@ class SideDrawer extends StatelessWidget {
                 onPressed: () {
                   Navigator.pop(context);
                 }),
+
             // Settings
             buildButton(
                 icon: Icons.settings_rounded,
                 onPressed: () {
-                  //
+                  Navigator.pushNamed(context, SettingsPage.routeName);
                 }),
           ],
         ),

@@ -5,6 +5,7 @@ import '../globals.dart';
 class BudgetPage extends StatefulWidget {
   const BudgetPage({super.key});
 
+  // FIXME Localization
   static const appBarTitle = 'Budget';
 
   @override
@@ -44,6 +45,7 @@ class _BudgetPageState extends State<BudgetPage> {
             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
             child: Column(
               children: [
+                // FIXME Localization
                 const Text('Balance'),
                 Container(
                   color: Colors.black,
@@ -78,6 +80,7 @@ class _BudgetPageState extends State<BudgetPage> {
                 const Text('0€'),
 
                 // Static transactions
+                // FIXME Localization
                 const Text('Monthly budget'),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -87,6 +90,7 @@ class _BudgetPageState extends State<BudgetPage> {
                       width: screenWidth * 0.3,
                       child: Column(
                         children: [
+                          // FIXME Localization
                           const Text('Income'),
                           TextField(
                             keyboardType: TextInputType.number,
@@ -117,6 +121,7 @@ class _BudgetPageState extends State<BudgetPage> {
                       width: screenWidth * 0.3,
                       child: Column(
                         children: [
+                          // FIXME Localization
                           const Text('Expenses'),
                           TextField(
                             keyboardType: TextInputType.number,
@@ -154,6 +159,7 @@ class _BudgetPageState extends State<BudgetPage> {
                     // TODO Save income/expenses
                   },
                   child: Text(
+                    // FIXME Localization
                     'Save Income/Expenses',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onSecondary,
@@ -163,6 +169,7 @@ class _BudgetPageState extends State<BudgetPage> {
 
                 // TODO Add ability to add quick transactions
                 // Saved transactions
+                // FIXME Localization
                 const Text('Quick Transactions'),
                 Align(
                   alignment: Alignment.centerRight,
@@ -176,6 +183,7 @@ class _BudgetPageState extends State<BudgetPage> {
                       // TODO Manage quick transactions
                     },
                     child: Text(
+                      // FIXME Localization
                       'Manage',
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSecondary,

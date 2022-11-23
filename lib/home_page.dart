@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 import './globals.dart';
-import './side_drawer.dart';
+import './widgets/side_drawer.dart';
 import './budget/budget_page.dart';
+
+import './providers/provider_api.dart';
 
 /// Home page
 class HomePage extends StatefulWidget {
@@ -15,6 +17,7 @@ class HomePage extends StatefulWidget {
 
 /// State for home page
 class _HomePageState extends State<HomePage> {
+  late final ProviderApi providerApi;
   late final List<Map<String, dynamic>> tabs;
 
   late final double screenHeight;
@@ -35,23 +38,7 @@ class _HomePageState extends State<HomePage> {
         {
           'widget': const BudgetPage(),
           'title': BudgetPage.appBarTitle,
-          'actions': <IconButton>[
-            IconButton(
-                onPressed: () async {
-                  var url = Uri.http(
-                    '172.16.160.15:8000',
-                    '/psql',
-                    {'table': 'table3'},
-                  );
-                  var response = await http.get(url);
-                  print(url);
-                  print('${response.statusCode}: ${response.reasonPhrase}');
-                },
-                icon: Icon(
-                  Icons.settings,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ))
-          ],
+          'actions': <IconButton>[],
         },
         // TODO Implement home page
         {
@@ -74,6 +61,9 @@ class _HomePageState extends State<HomePage> {
       ];
       screenHeight = MediaQuery.of(context).size.height -
           MediaQuery.of(context).viewPadding.top;
+
+      providerApi = Provider.of<ProviderApi>(context);
+      providerApi.connect();
 
       isInitialized = true;
     }
