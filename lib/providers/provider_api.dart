@@ -48,13 +48,12 @@ class ProviderApi with ChangeNotifier {
 
   // FIXME Document
   void connect({String? url}) async {
-    _connectionStatus = 'Connecting...';
-    notifyListeners();
     final dir = await getApplicationDocumentsDirectory();
     if (url == null) {
       var file = File('${dir.path}/server_url.txt');
       try {
         url = file.readAsStringSync();
+        _apiServer = url;
       } on FileSystemException {
         file.create();
         url = '';

@@ -5,6 +5,7 @@ import './home_page.dart';
 import './settings/settings_page.dart';
 
 import './providers/provider_api.dart';
+import './providers/provider_auth.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (context) => ProviderAuth()),
         ChangeNotifierProvider(create: (context) => ProviderApi()),
       ],
       child: MaterialApp(

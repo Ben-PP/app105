@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../settings/settings_page.dart';
+import './dialogs/login_dialog.dart';
 
 class SideDrawer extends StatelessWidget {
   const SideDrawer({super.key});
@@ -31,17 +32,23 @@ class SideDrawer extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         child: Column(
           children: [
-            // Home
+            // Login
             buildButton(
-                icon: Icons.home_rounded,
+                icon: Icons.login_rounded,
                 onPressed: () {
                   Navigator.pop(context);
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return const LoginDialog();
+                      });
                 }),
 
             // Settings
             buildButton(
                 icon: Icons.settings_rounded,
                 onPressed: () {
+                  Navigator.pop(context);
                   Navigator.pushNamed(context, SettingsPage.routeName);
                 }),
           ],

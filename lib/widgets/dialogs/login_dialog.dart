@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../providers/provider_auth.dart';
 import '../../providers/provider_api.dart';
 
 /// Dialog for connecting to api server
-class ApiConnectDialog extends StatefulWidget {
-  const ApiConnectDialog({
+class LoginDialog extends StatefulWidget {
+  const LoginDialog({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<ApiConnectDialog> createState() => _ApiConnectDialogState();
+  State<LoginDialog> createState() => _LoginDialogState();
 }
 
-class _ApiConnectDialogState extends State<ApiConnectDialog> {
+class _LoginDialogState extends State<LoginDialog> {
+  late final ProviderAuth providerAuth;
   late final ProviderApi providerApi;
-  final TextEditingController textController = TextEditingController();
+  final TextEditingController uidController = TextEditingController();
+  final TextEditingController pwdController = TextEditingController();
   var isInitialized = false;
 
   @override
   void didChangeDependencies() {
     if (!isInitialized) {
+      providerAuth = Provider.of<ProviderAuth>(context);
       providerApi = Provider.of<ProviderApi>(context);
       isInitialized = true;
     }
@@ -29,7 +33,8 @@ class _ApiConnectDialogState extends State<ApiConnectDialog> {
 
   @override
   void dispose() {
-    textController.dispose();
+    uidController.dispose();
+    pwdController.dispose();
     super.dispose();
   }
 
@@ -51,7 +56,7 @@ class _ApiConnectDialogState extends State<ApiConnectDialog> {
                 // Title
                 const Text(
                   // FIXME Localization
-                  'Server address:',
+                  'Login',
                   style: TextStyle(
                     fontSize: 20,
                   ),
@@ -62,14 +67,36 @@ class _ApiConnectDialogState extends State<ApiConnectDialog> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      TextField(
-                        controller: textController,
-                        decoration: const InputDecoration(
-                            contentPadding: EdgeInsets.fromLTRB(12, 12, 12, 0),
-                            isCollapsed: true,
-                            enabledBorder: UnderlineInputBorder(),
-                            focusedBorder: UnderlineInputBorder(),
-                            hintText: 'E.g. 192.168.1.10:8000...'),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: TextField(
+                          controller: uidController,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: const InputDecoration(
+                              contentPadding:
+                                  EdgeInsets.fromLTRB(12, 12, 12, 0),
+                              isCollapsed: true,
+                              enabledBorder: UnderlineInputBorder(),
+                              focusedBorder: UnderlineInputBorder(),
+                              hintText: 'E.g. user.fun@example.com...'),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: TextField(
+                          controller: pwdController,
+                          obscureText: true,
+                          autocorrect: false,
+                          enableSuggestions: false,
+                          enableIMEPersonalizedLearning: false,
+                          decoration: const InputDecoration(
+                              contentPadding:
+                                  EdgeInsets.fromLTRB(12, 12, 12, 0),
+                              isCollapsed: true,
+                              enabledBorder: UnderlineInputBorder(),
+                              focusedBorder: UnderlineInputBorder(),
+                              hintText: 'password...'),
+                        ),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -84,8 +111,11 @@ class _ApiConnectDialogState extends State<ApiConnectDialog> {
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              providerApi.connect(
-                                  url: textController.text.trim());
+                              providerAuth.login(
+                                uid: uidController.text.trim(),
+                                psswd: pwdController.text,
+                                apiServer: providerApi.apiServer,
+                              );
                               Navigator.pop(context);
                             },
                             style: Theme.of(context)
@@ -98,7 +128,7 @@ class _ApiConnectDialogState extends State<ApiConnectDialog> {
                                                 .colorScheme
                                                 .onPrimary)),
                             // FIXME Localization
-                            child: const Text('Connect'),
+                            child: const Text('Login'),
                           ),
                         ],
                       ),
