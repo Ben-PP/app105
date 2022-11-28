@@ -1,22 +1,68 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+
+import './provider_api.dart';
 
 class ProviderAuth with ChangeNotifier {
   String _jwt = '';
+  bool _isAuthenticated = false;
 
-  /// Authenticates user and return JWT if successful
+  /// Returns true if user is authenticated
+  bool get isAuthenticated {
+    return _isAuthenticated;
+  }
+
+  /// Returns the jwt
+  String get jwt {
+    return _jwt;
+  }
+
+  /// Validates if the JWT is still valid
+  void validateJWT(ProviderApi providerApi) async {
+    final dir = await getApplicationDocumentsDirectory();
+    var file = File('${dir.path}/jwt');
+    try {
+      _jwt = file.readAsStringSync();
+    } on FileSystemException {
+      _jwt = '';
+      return;
+    }
+    var url = Uri.http(providerApi.apiServer, '/test');
+    try {
+      var response = await http.get(
+        url,
+        headers: <String, String>{'Authorization': 'Bearer $_jwt'},
+      );
+      if (response.statusCode == 200) {
+        _isAuthenticated = true;
+        notifyListeners();
+        return;
+      }
+    } catch (e) {
+      print(e);
+    }
+    _isAuthenticated = false;
+    notifyListeners();
+  }
+
+  /// Authenticates user and saves JWT if successful
+  ///
+  /// Returns true if successful and false if not
   Future<dynamic> login({
     required String uid,
     required String psswd,
-    required String apiServer,
+    // TODO Maybe not need for whole provider
+    required ProviderApi providerApi,
   }) async {
     if (uid.isEmpty) {
       print('[ERROR]<Login>: Uid can not be empty.');
-      return;
+      return false;
     }
-    var url = Uri.http(apiServer, '/user/login');
+    var url = Uri.http(providerApi.apiServer, '/user/login');
     try {
       var response = await http.post(
         url,
@@ -29,10 +75,42 @@ class ProviderAuth with ChangeNotifier {
         }),
       );
       _jwt = jsonDecode(response.body)['access_token'];
-      print(_jwt);
+      final dir = await getApplicationDocumentsDirectory();
+      var file = File('${dir.path}/jwt');
+      file.writeAsStringSync(_jwt);
+      _isAuthenticated = true;
+      notifyListeners();
+      return true;
     } catch (e) {
       print(e);
+      return false;
+    }
+  }
+
+  // FIXME Document
+  void logout() async {
+    final dir = await getApplicationDocumentsDirectory();
+    var file = File('${dir.path}/server_url.txt');
+    var serverUrl = file.readAsStringSync();
+    var url = Uri.http(serverUrl, '/user/logout');
+    try {
+      var response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'jwt': _jwt,
+        }),
+      );
+    } catch (e) {
+      // TODO Throw  exception
       return;
     }
+    file = File('${dir.path}/jwt');
+    file.deleteSync();
+    _isAuthenticated = false;
+    _jwt = '';
+    notifyListeners();
   }
 }

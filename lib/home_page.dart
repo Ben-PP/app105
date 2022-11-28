@@ -6,6 +6,7 @@ import './widgets/side_drawer.dart';
 import './budget/budget_page.dart';
 
 import './providers/provider_api.dart';
+import './providers/provider_auth.dart';
 
 /// Home page
 class HomePage extends StatefulWidget {
@@ -18,6 +19,7 @@ class HomePage extends StatefulWidget {
 /// State for home page
 class _HomePageState extends State<HomePage> {
   late final ProviderApi providerApi;
+  late final ProviderAuth providerAuth;
   late final List<Map<String, dynamic>> tabs;
 
   late final double screenHeight;
@@ -63,8 +65,10 @@ class _HomePageState extends State<HomePage> {
           MediaQuery.of(context).viewPadding.top;
 
       providerApi = Provider.of<ProviderApi>(context);
-      providerApi.connect();
-
+      providerAuth = Provider.of<ProviderAuth>(context);
+      providerApi.connect().then((value) {
+        providerAuth.validateJWT(providerApi);
+      });
       isInitialized = true;
     }
     super.didChangeDependencies();

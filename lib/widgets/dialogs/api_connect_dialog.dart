@@ -22,6 +22,7 @@ class _ApiConnectDialogState extends State<ApiConnectDialog> {
   void didChangeDependencies() {
     if (!isInitialized) {
       providerApi = Provider.of<ProviderApi>(context);
+      textController.text = providerApi.apiServer;
       isInitialized = true;
     }
     super.didChangeDependencies();

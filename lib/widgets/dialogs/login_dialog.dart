@@ -111,12 +111,18 @@ class _LoginDialogState extends State<LoginDialog> {
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              providerAuth.login(
+                              providerAuth
+                                  .login(
                                 uid: uidController.text.trim(),
                                 psswd: pwdController.text,
-                                apiServer: providerApi.apiServer,
-                              );
-                              Navigator.pop(context);
+                                providerApi: providerApi,
+                              )
+                                  .then((value) {
+                                if (value) {
+                                  Navigator.pop(context);
+                                  return;
+                                }
+                              });
                             },
                             style: Theme.of(context)
                                 .elevatedButtonTheme

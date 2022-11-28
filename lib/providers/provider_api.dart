@@ -47,7 +47,7 @@ class ProviderApi with ChangeNotifier {
   }
 
   // FIXME Document
-  void connect({String? url}) async {
+  Future<void> connect({String? url}) async {
     final dir = await getApplicationDocumentsDirectory();
     if (url == null) {
       var file = File('${dir.path}/server_url.txt');
