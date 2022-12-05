@@ -76,6 +76,7 @@ class ProviderApi with ChangeNotifier {
     print('[INFO]: Connected to $url');
 
     notifyListeners();
+    return;
   }
 
   // FIXME Document

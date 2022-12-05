@@ -37,6 +37,7 @@ class _SideDrawerState extends State<SideDrawer> {
         child: IconButton(
           iconSize: 60,
           onPressed: onPressed,
+          color: Theme.of(context).colorScheme.onPrimary,
           icon: Icon(
             icon,
           ),
@@ -61,7 +62,15 @@ class _SideDrawerState extends State<SideDrawer> {
                 onPressed: providerAuth.isAuthenticated
                     ? () {
                         Navigator.pop(context);
-                        providerAuth.logout();
+                        providerAuth.logout().catchError((e) {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return const AlertDialog(
+                                  title: Text('Could not logout!'),
+                                );
+                              });
+                        });
                       }
                     : () {
                         Navigator.pop(context);

@@ -117,8 +117,8 @@ class _LoginDialogState extends State<LoginDialog> {
                                 psswd: pwdController.text,
                                 providerApi: providerApi,
                               )
-                                  .then((value) {
-                                if (value) {
+                                  .then((success) {
+                                if (success) {
                                   Navigator.pop(context);
                                   return;
                                 }

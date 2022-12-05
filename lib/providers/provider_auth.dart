@@ -28,10 +28,12 @@ class ProviderAuth with ChangeNotifier {
     try {
       _jwt = file.readAsStringSync();
     } on FileSystemException {
+      _isAuthenticated = false;
       _jwt = '';
+      notifyListeners();
       return;
     }
-    var url = Uri.http(providerApi.apiServer, '/test');
+    var url = Uri.http(providerApi.apiServer, '/validate-jwt');
     try {
       var response = await http.get(
         url,
@@ -62,7 +64,7 @@ class ProviderAuth with ChangeNotifier {
       print('[ERROR]<Login>: Uid can not be empty.');
       return false;
     }
-    var url = Uri.http(providerApi.apiServer, '/user/login');
+    var url = Uri.http(providerApi.apiServer, '/user/loginv2');
     try {
       var response = await http.post(
         url,
@@ -74,6 +76,9 @@ class ProviderAuth with ChangeNotifier {
           'password': psswd,
         }),
       );
+      if (response.statusCode == 401) {
+        return false;
+      }
       _jwt = jsonDecode(response.body)['access_token'];
       final dir = await getApplicationDocumentsDirectory();
       var file = File('${dir.path}/jwt');
@@ -88,29 +93,27 @@ class ProviderAuth with ChangeNotifier {
   }
 
   // FIXME Document
-  void logout() async {
+  Future<bool> logout() async {
     final dir = await getApplicationDocumentsDirectory();
     var file = File('${dir.path}/server_url.txt');
     var serverUrl = file.readAsStringSync();
     var url = Uri.http(serverUrl, '/user/logout');
-    try {
-      var response = await http.post(
-        url,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{
-          'jwt': _jwt,
-        }),
-      );
-    } catch (e) {
-      // TODO Throw  exception
-      return;
-    }
+
+    await http.post(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'jwt': _jwt,
+      }),
+    );
+
     file = File('${dir.path}/jwt');
     file.deleteSync();
     _isAuthenticated = false;
     _jwt = '';
     notifyListeners();
+    return true;
   }
 }
