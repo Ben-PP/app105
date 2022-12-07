@@ -68,6 +68,7 @@ class _HomePageState extends State<HomePage> {
       providerAuth = Provider.of<ProviderAuth>(context);
       providerApi.connect().then((value) {
         providerAuth.validateJWT(providerApi);
+        providerAuth.readUid();
       });
       isInitialized = true;
     }

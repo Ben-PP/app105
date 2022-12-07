@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../globals.dart';
 import '../widgets/dialogs/api_connect_dialog.dart';
+import '../widgets/dialogs/change_pwd_dialog.dart';
 
 import '../providers/provider_api.dart';
 
@@ -90,7 +91,38 @@ class _SettingsPageState extends State<SettingsPage> {
               },
               // FIXME Localization
               child: Text(
-                providerApi.isServerAvailable ? 'Disconnect' : 'Connect Server',
+                providerApi.isServerAvailable ? 'Forget' : 'Add Server',
+              ),
+            ),
+
+            // User management
+            const Text(
+              // FIXME Localization
+              'User Management',
+            ),
+            ElevatedButton(
+              style: !providerApi.isServerAvailable
+                  ? Theme.of(context).elevatedButtonTheme.style!.copyWith(
+                        backgroundColor: MaterialStateProperty.all(
+                          Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.5),
+                        ),
+                      )
+                  : null,
+              onPressed: !providerApi.isServerAvailable
+                  ? () {}
+                  : () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return const ChangePwdDialog();
+                          });
+                    },
+              // FIXME Localization
+              child: const Text(
+                'Change Password',
               ),
             ),
           ],

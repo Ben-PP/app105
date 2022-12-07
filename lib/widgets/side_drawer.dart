@@ -66,8 +66,45 @@ class _SideDrawerState extends State<SideDrawer> {
                           showDialog(
                               context: context,
                               builder: (context) {
-                                return const AlertDialog(
-                                  title: Text('Could not logout!'),
+                                return AlertDialog(
+                                  title: const Text(
+                                    // FIXME Localization
+                                    'Could not logout!',
+                                  ),
+                                  actions: [
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text(
+                                        // FIXME Localization
+                                        'Close',
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              });
+                          return false;
+                        }).then((value) {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text(
+                                    // FIXME Localization
+                                    'Logged out.',
+                                  ),
+                                  actions: [
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text(
+                                        // FIXME Localization
+                                        'Close',
+                                      ),
+                                    ),
+                                  ],
                                 );
                               });
                         });

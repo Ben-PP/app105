@@ -5,7 +5,7 @@ import 'package:path_provider/path_provider.dart';
 
 class ProviderApi with ChangeNotifier {
   var _apiServer = '';
-  var _connectionStatus = 'Disconnected';
+  var _connectionStatus = 'Not Responding';
   var _isServerAvailable = false;
 
   /// Returns the saved api server
