@@ -6,6 +6,7 @@ import '../widgets/dialogs/api_connect_dialog.dart';
 import '../widgets/dialogs/change_pwd_dialog.dart';
 
 import '../providers/provider_api.dart';
+import '../providers/provider_auth.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -17,8 +18,10 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   late final ProviderApi providerApi;
+  late final ProviderAuth providerAuth;
   late final double screenHeight;
   late final double screenWidth;
+  var users = [];
   var isInitialized = false;
 
   @override
@@ -26,11 +29,17 @@ class _SettingsPageState extends State<SettingsPage> {
     if (!isInitialized) {
       screenHeight = MediaQuery.of(context).size.height -
           MediaQuery.of(context).viewPadding.top;
+      screenWidth = MediaQuery.of(context).size.width;
 
       providerApi = Provider.of<ProviderApi>(context);
+      providerAuth = Provider.of<ProviderAuth>(context);
       isInitialized = true;
     }
     super.didChangeDependencies();
+  }
+
+  Widget userListItemBuilder(BuildContext context, int index) {
+    return Container();
   }
 
   @override
@@ -43,7 +52,8 @@ class _SettingsPageState extends State<SettingsPage> {
         centerTitle: true,
       ),
       body: SizedBox(
-        width: double.infinity,
+        height: screenHeight - screenHeight * SizesGlobal.appBarHeight,
+        width: screenWidth,
         child: Column(
           children: [
             // FIXME Localization
@@ -100,8 +110,23 @@ class _SettingsPageState extends State<SettingsPage> {
               // FIXME Localization
               'User Management',
             ),
+            SizedBox(
+              height: 100,
+              child: ListView.builder(
+                itemCount: users.length,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: userListItemBuilder,
+              ),
+            ),
+
+            // Account management
+            const Text(
+              // FIXME Localization
+              'Account',
+            ),
             ElevatedButton(
-              style: !providerApi.isServerAvailable
+              style: !providerApi.isServerAvailable ||
+                      !providerAuth.isAuthenticated
                   ? Theme.of(context).elevatedButtonTheme.style!.copyWith(
                         backgroundColor: MaterialStateProperty.all(
                           Theme.of(context)
@@ -111,7 +136,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                       )
                   : null,
-              onPressed: !providerApi.isServerAvailable
+              onPressed: !providerApi.isServerAvailable ||
+                      !providerAuth.isAuthenticated
                   ? () {}
                   : () {
                       showDialog(

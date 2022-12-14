@@ -18,6 +18,12 @@ class _ChangePwdDialogState extends State<ChangePwdDialog> {
   final TextEditingController newPsswdController = TextEditingController();
   var isInitialized = false;
 
+  // Error flags
+  var hasErrors = false;
+  var isOldPasswordEmpty = false;
+  var isNewPasswordEmpty = false;
+  var isCredentialsDenied = false;
+
   @override
   void didChangeDependencies() {
     if (!isInitialized) {
@@ -33,6 +39,21 @@ class _ChangePwdDialogState extends State<ChangePwdDialog> {
     oldPsswdController.dispose();
     newPsswdController.dispose();
     super.dispose();
+  }
+
+  void _checkErrors() {
+    setState(() {
+      // TODO Change to min 8 characters
+      if (oldPsswdController.text.length < 3 ||
+          newPsswdController.text.length < 3) {
+        isOldPasswordEmpty = true;
+        hasErrors = true;
+      } else {
+        isOldPasswordEmpty = false;
+        isNewPasswordEmpty = false;
+        hasErrors = false;
+      }
+    });
   }
 
   @override
@@ -68,7 +89,10 @@ class _ChangePwdDialogState extends State<ChangePwdDialog> {
                         padding: const EdgeInsets.only(top: 10),
                         child: TextField(
                           controller: oldPsswdController,
-                          keyboardType: TextInputType.emailAddress,
+                          obscureText: true,
+                          autocorrect: false,
+                          enableSuggestions: false,
+                          enableIMEPersonalizedLearning: false,
                           decoration: const InputDecoration(
                               contentPadding:
                                   EdgeInsets.fromLTRB(12, 12, 12, 0),
@@ -95,6 +119,7 @@ class _ChangePwdDialogState extends State<ChangePwdDialog> {
                               hintText: 'New Password...'),
                         ),
                       ),
+                      ..._showErrors(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         mainAxisSize: MainAxisSize.max,
@@ -108,6 +133,8 @@ class _ChangePwdDialogState extends State<ChangePwdDialog> {
                           ),
                           ElevatedButton(
                             onPressed: () {
+                              _checkErrors();
+                              if (hasErrors) return;
                               providerAuth
                                   .changePassword(
                                 oldPassword: oldPsswdController.text,
@@ -115,6 +142,14 @@ class _ChangePwdDialogState extends State<ChangePwdDialog> {
                               )
                                   .then((value) {
                                 Navigator.pop(context);
+                              }).catchError((e) {
+                                if (e.toString().contains(RegExp('401|403'))) {
+                                  setState(() {
+                                    isCredentialsDenied = true;
+                                    hasErrors = true;
+                                  });
+                                  return;
+                                }
                               });
                             },
                             style: Theme.of(context)
@@ -140,5 +175,27 @@ class _ChangePwdDialogState extends State<ChangePwdDialog> {
         ),
       ),
     );
+  }
+
+  List<Widget> _showErrors() {
+    TextStyle style = const TextStyle(
+      color: Colors.red,
+      fontWeight: FontWeight.bold,
+    );
+    return hasErrors
+        ? [
+            if (isOldPasswordEmpty || isNewPasswordEmpty)
+              Text(
+                // FIXME Localizaton
+                'Password must be at least 8 characters.',
+                style: style,
+              ),
+            if (isCredentialsDenied)
+              Text(
+                'Invalid Credentials',
+                style: style,
+              ),
+          ]
+        : [];
   }
 }

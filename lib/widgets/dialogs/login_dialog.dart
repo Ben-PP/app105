@@ -115,13 +115,32 @@ class _LoginDialogState extends State<LoginDialog> {
                                   .login(
                                 uid: uidController.text.trim(),
                                 psswd: pwdController.text,
-                                providerApi: providerApi,
                               )
-                                  .then((success) {
-                                if (success) {
-                                  Navigator.pop(context);
-                                  return;
-                                }
+                                  .then((_) {
+                                Navigator.pop(context);
+                                return;
+                              }).catchError((e) {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: Text(
+                                          // FIXME Localization
+                                          'Could not login:\n$e',
+                                        ),
+                                        actions: [
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text(
+                                              // FIXME Localization
+                                              'Close',
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    });
                               });
                             },
                             style: Theme.of(context)

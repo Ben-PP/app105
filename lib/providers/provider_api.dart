@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
+import './functions.dart' as functions;
+
 class ProviderApi with ChangeNotifier {
   var _apiServer = '';
   var _connectionStatus = 'Not Responding';
@@ -30,63 +32,60 @@ class ProviderApi with ChangeNotifier {
   // TODO Authenticate that there is correct backend behind url.
   Future<bool> ping({required String serverAddress}) async {
     if (serverAddress == '') {
-      print('[ERROR]: Invalid url');
-      return false;
+      return Future.error('[CONNECTION_ERROR]: Invalid url');
     }
-    var url = Uri.http(serverAddress, '/ping');
+    var url = Uri.http(serverAddress, '/tools/ping');
     try {
       var response = await http.get(url);
-      if (response.statusCode == 200) {
-        return true;
+      if (response.statusCode != 200) {
+        return Future.error('${response.statusCode}: ${response.reasonPhrase}');
       }
-      return false;
+      return true;
     } catch (e) {
-      print(e);
-      return false;
+      return Future.error(e);
     }
   }
 
-  // FIXME Document
+  /// Saves the servers connection info
+  ///
+  /// If [url] is not given, it will be tried to read from a file.
   Future<void> connect({String? url}) async {
-    final dir = await getApplicationDocumentsDirectory();
     if (url == null) {
-      var file = File('${dir.path}/server_url.txt');
       try {
-        url = file.readAsStringSync();
-        _apiServer = url;
+        url = await functions.readAppFile(filePath: '/server_url');
       } on FileSystemException {
-        file.create();
-        url = '';
-        print('[INFO]: Url file created. No url found.');
+        _apiServer = '';
+        await functions.writeAppFile(
+            filePath: '/server_url', content: _apiServer);
+        return Future.error(
+            '[CONNECTION_ERROR]: Could not read url from file.');
       }
     }
 
-    if (!await ping(serverAddress: url)) {
-      print('[ERROR]: Server does not respond.');
+    if (!await ping(serverAddress: url).catchError((e) => false)) {
       _isServerAvailable = false;
       _connectionStatus = 'Disconnected';
+      _apiServer = url;
+      await functions.writeAppFile(
+          filePath: '/server_url', content: _apiServer);
       notifyListeners();
-      return;
+      return Future.error('[CONNECTION_ERROR]: Could not connect to $url');
     }
-    _apiServer = url;
     _connectionStatus = 'Connected';
     _isServerAvailable = true;
-    var file = File('${dir.path}/server_url.txt');
-    file.writeAsStringSync(url);
-    print('[INFO]: Connected to $url');
-
+    _apiServer = url;
+    await functions.writeAppFile(filePath: '/server_url', content: _apiServer);
     notifyListeners();
     return;
   }
 
-  // FIXME Document
+  /// Deletes all server connection info
   void disconnect() async {
     final dir = await getApplicationDocumentsDirectory();
     _connectionStatus = 'Disconnected';
     _isServerAvailable = false;
-    var file = File('${dir.path}/server_url.txt');
+    var file = File('${dir.path}/server_url');
     file.delete();
-    print('[INFO]: Disconnected from $_apiServer');
     _apiServer = '';
     notifyListeners();
   }

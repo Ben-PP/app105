@@ -62,14 +62,14 @@ class _SideDrawerState extends State<SideDrawer> {
                 onPressed: providerAuth.isAuthenticated
                     ? () {
                         Navigator.pop(context);
-                        providerAuth.logout().catchError((e) {
+                        providerAuth.logout().then((value) {
                           showDialog(
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
                                   title: const Text(
                                     // FIXME Localization
-                                    'Could not logout!',
+                                    'Logged out.',
                                   ),
                                   actions: [
                                     ElevatedButton(
@@ -84,15 +84,14 @@ class _SideDrawerState extends State<SideDrawer> {
                                   ],
                                 );
                               });
-                          return false;
-                        }).then((value) {
+                        }).catchError((e) {
                           showDialog(
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
-                                  title: const Text(
+                                  title: Text(
                                     // FIXME Localization
-                                    'Logged out.',
+                                    'Could not logout:\n$e',
                                   ),
                                   actions: [
                                     ElevatedButton(
