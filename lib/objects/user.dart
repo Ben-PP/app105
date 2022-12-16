@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
 
 class User {
-  String uid = '';
-  Color color = Colors.purple;
-  bool canMakeTransactions = false;
+  late String uid;
+  late bool canMakeTransactions;
+  late bool isAdmin;
+
+  User({
+    required this.uid,
+    this.canMakeTransactions = false,
+  });
+
+  User.fromMap({required Map<String, dynamic> map}) {
+    uid = map['uid'];
+    canMakeTransactions = map['can_make_transactions'];
+    isAdmin = map['is_admin'];
+  }
 }

@@ -7,6 +7,7 @@ import 'functions.dart' as functions;
 class ProviderAuth with ChangeNotifier {
   String _jwt = '';
   bool _isAuthenticated = false;
+  bool _isAdmin = false;
 
   /// Returns true if user is authenticated
   bool get isAuthenticated {
@@ -16,6 +17,10 @@ class ProviderAuth with ChangeNotifier {
   /// Returns the jwt
   String get jwt {
     return _jwt;
+  }
+
+  bool get isAdmin {
+    return _isAdmin;
   }
 
   /// Validates if the JWT is still valid
@@ -38,11 +43,13 @@ class ProviderAuth with ChangeNotifier {
         notifyListeners();
         return Future.error('Invalid response.');
       }
+      var body = jsonDecode(response.body);
+      _isAdmin = body['is_admin'];
+      _isAuthenticated = true;
+      notifyListeners();
     } catch (e) {
       return Future.error(e);
     }
-    _isAuthenticated = true;
-    notifyListeners();
   }
 
   /// Changes the password of the account
@@ -97,7 +104,9 @@ class ProviderAuth with ChangeNotifier {
       if (response.statusCode != 200) {
         return Future.error('${response.statusCode}: ${response.reasonPhrase}');
       }
-      _jwt = jsonDecode(response.body)['access_token'];
+      var body = jsonDecode(response.body);
+      _jwt = body['access_token'];
+      _isAdmin = body['is_admin'];
       await functions.writeAppFile(filePath: '/jwt', content: _jwt);
       _isAuthenticated = true;
       notifyListeners();
@@ -130,6 +139,7 @@ class ProviderAuth with ChangeNotifier {
     }
     _isAuthenticated = false;
     _jwt = '';
+    _isAdmin = false;
     notifyListeners();
   }
 }

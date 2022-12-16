@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        toolbarHeight: screenHeight * SizesGlobal.appBarHeight,
+        toolbarHeight: screenHeight * GlobalSizes.appBarHeight,
         title: Text((tabs[currentIndex]['title'])),
         centerTitle: true,
         actions: tabs[currentIndex]['actions'],

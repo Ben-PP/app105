@@ -19,7 +19,6 @@ class _ChangePwdDialogState extends State<ChangePwdDialog> {
   var isInitialized = false;
 
   // Error flags
-  var hasErrors = false;
   var isOldPasswordEmpty = false;
   var isNewPasswordEmpty = false;
   var isCredentialsDenied = false;
@@ -44,14 +43,10 @@ class _ChangePwdDialogState extends State<ChangePwdDialog> {
   void _checkErrors() {
     setState(() {
       // TODO Change to min 8 characters
-      if (oldPsswdController.text.length < 3 ||
-          newPsswdController.text.length < 3) {
-        isOldPasswordEmpty = true;
-        hasErrors = true;
+      if (newPsswdController.text.length < 3) {
+        isNewPasswordEmpty = true;
       } else {
-        isOldPasswordEmpty = false;
         isNewPasswordEmpty = false;
-        hasErrors = false;
       }
     });
   }
@@ -133,8 +128,9 @@ class _ChangePwdDialogState extends State<ChangePwdDialog> {
                           ),
                           ElevatedButton(
                             onPressed: () {
+                              isCredentialsDenied = false;
                               _checkErrors();
-                              if (hasErrors) return;
+                              if (isNewPasswordEmpty) return;
                               providerAuth
                                   .changePassword(
                                 oldPassword: oldPsswdController.text,
@@ -146,7 +142,6 @@ class _ChangePwdDialogState extends State<ChangePwdDialog> {
                                 if (e.toString().contains(RegExp('401|403'))) {
                                   setState(() {
                                     isCredentialsDenied = true;
-                                    hasErrors = true;
                                   });
                                   return;
                                 }
@@ -182,7 +177,7 @@ class _ChangePwdDialogState extends State<ChangePwdDialog> {
       color: Colors.red,
       fontWeight: FontWeight.bold,
     );
-    return hasErrors
+    return isCredentialsDenied || isNewPasswordEmpty
         ? [
             if (isOldPasswordEmpty || isNewPasswordEmpty)
               Text(

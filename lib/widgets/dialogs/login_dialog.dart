@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../../globals.dart';
 import '../../providers/provider_auth.dart';
 import '../../providers/provider_api.dart';
 
@@ -21,6 +23,10 @@ class _LoginDialogState extends State<LoginDialog> {
   final TextEditingController pwdController = TextEditingController();
   var isInitialized = false;
 
+  // Error flags
+  var isUserNameEmpty = false;
+  var isCredentialsDenied = false;
+
   @override
   void didChangeDependencies() {
     if (!isInitialized) {
@@ -36,6 +42,17 @@ class _LoginDialogState extends State<LoginDialog> {
     uidController.dispose();
     pwdController.dispose();
     super.dispose();
+  }
+
+  void _checkErrors() {
+    setState(() {
+      isCredentialsDenied = false;
+      if (uidController.text.trim().isEmpty) {
+        isUserNameEmpty = true;
+      } else {
+        isUserNameEmpty = false;
+      }
+    });
   }
 
   @override
@@ -72,13 +89,18 @@ class _LoginDialogState extends State<LoginDialog> {
                         child: TextField(
                           controller: uidController,
                           keyboardType: TextInputType.emailAddress,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                              GlobalTextChecks.allowedUidCharacters,
+                            ),
+                          ],
                           decoration: const InputDecoration(
                               contentPadding:
                                   EdgeInsets.fromLTRB(12, 12, 12, 0),
                               isCollapsed: true,
                               enabledBorder: UnderlineInputBorder(),
                               focusedBorder: UnderlineInputBorder(),
-                              hintText: 'E.g. user.fun@example.com...'),
+                              hintText: 'Username...'),
                         ),
                       ),
                       Padding(
@@ -98,6 +120,7 @@ class _LoginDialogState extends State<LoginDialog> {
                               hintText: 'password...'),
                         ),
                       ),
+                      ..._showErrors(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         mainAxisSize: MainAxisSize.max,
@@ -111,6 +134,8 @@ class _LoginDialogState extends State<LoginDialog> {
                           ),
                           ElevatedButton(
                             onPressed: () {
+                              _checkErrors();
+                              if (isUserNameEmpty) return;
                               providerAuth
                                   .login(
                                 uid: uidController.text.trim(),
@@ -120,27 +145,12 @@ class _LoginDialogState extends State<LoginDialog> {
                                 Navigator.pop(context);
                                 return;
                               }).catchError((e) {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        title: Text(
-                                          // FIXME Localization
-                                          'Could not login:\n$e',
-                                        ),
-                                        actions: [
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: const Text(
-                                              // FIXME Localization
-                                              'Close',
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    });
+                                if (e.toString().contains(RegExp('401|403'))) {
+                                  setState(() {
+                                    isCredentialsDenied = true;
+                                  });
+                                  return;
+                                }
                               });
                             },
                             style: Theme.of(context)
@@ -166,5 +176,27 @@ class _LoginDialogState extends State<LoginDialog> {
         ),
       ),
     );
+  }
+
+  List<Widget> _showErrors() {
+    TextStyle style = const TextStyle(
+      color: Colors.red,
+      fontWeight: FontWeight.bold,
+    );
+    return isCredentialsDenied || isUserNameEmpty
+        ? [
+            if (isUserNameEmpty)
+              Text(
+                // FIXME Localizaton
+                'Username is required!',
+                style: style,
+              ),
+            if (isCredentialsDenied)
+              Text(
+                'Invalid Credentials',
+                style: style,
+              ),
+          ]
+        : [];
   }
 }

@@ -6,6 +6,7 @@ import './settings/settings_page.dart';
 
 import './providers/provider_api.dart';
 import './providers/provider_auth.dart';
+import './providers/provider_users.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => ProviderAuth()),
         ChangeNotifierProvider(create: (context) => ProviderApi()),
+        ChangeNotifierProvider(create: (context) => ProviderUsers()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -44,6 +46,24 @@ class MyApp extends StatelessWidget {
               backgroundColor:
                   MaterialStateProperty.all<Color>(Colors.teal.shade700),
               foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+            ),
+          ),
+          textTheme: const TextTheme(
+            // Headlines inside the pages
+            displayMedium: TextStyle(
+              fontSize: 25,
+              color: Colors.purple,
+            ),
+            // Titles in tiles
+            titleLarge: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.purple,
+            ),
+            // titles in body
+            titleSmall: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),

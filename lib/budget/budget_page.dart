@@ -24,7 +24,7 @@ class _BudgetPageState extends State<BudgetPage> {
               MediaQuery.of(context).viewPadding.top) -
           (MediaQuery.of(context).size.height -
                   MediaQuery.of(context).viewPadding.top) *
-              SizesGlobal.appBarHeight;
+              GlobalSizes.appBarHeight;
       screenWidth = MediaQuery.of(context).size.width;
 
       isInitialized = true;
