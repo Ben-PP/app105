@@ -67,9 +67,14 @@ class _SideDrawerState extends State<SideDrawer> {
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
-                                  title: const Text(
-                                    // FIXME Localization
-                                    'Logged out.',
+                                  title: Column(
+                                    children: const [
+                                      Text(
+                                        // FIXME Localization
+                                        'Logged out.',
+                                      ),
+                                      Divider(),
+                                    ],
                                   ),
                                   actions: [
                                     ElevatedButton(

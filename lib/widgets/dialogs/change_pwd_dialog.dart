@@ -74,6 +74,7 @@ class _ChangePwdDialogState extends State<ChangePwdDialog> {
                     fontSize: 20,
                   ),
                 ),
+                const Divider(),
                 // Body
                 Center(
                   child: Column(

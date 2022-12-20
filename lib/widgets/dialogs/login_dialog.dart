@@ -78,6 +78,7 @@ class _LoginDialogState extends State<LoginDialog> {
                     fontSize: 20,
                   ),
                 ),
+                const Divider(),
                 // Body
                 Center(
                   child: Column(
@@ -88,7 +89,7 @@ class _LoginDialogState extends State<LoginDialog> {
                         padding: const EdgeInsets.only(top: 10),
                         child: TextField(
                           controller: uidController,
-                          keyboardType: TextInputType.emailAddress,
+                          keyboardType: TextInputType.name,
                           inputFormatters: [
                             FilteringTextInputFormatter.allow(
                               GlobalTextChecks.allowedUidCharacters,

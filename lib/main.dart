@@ -41,11 +41,34 @@ class MyApp extends StatelessWidget {
             onSurface: Colors.white,
             brightness: Brightness.light,
           ),
+          dividerTheme: const DividerThemeData(
+            color: Colors.black,
+          ),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ButtonStyle(
               backgroundColor:
                   MaterialStateProperty.all<Color>(Colors.teal.shade700),
               foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+            ),
+          ),
+          textSelectionTheme: const TextSelectionThemeData(
+            cursorColor: Colors.black87,
+          ),
+          inputDecorationTheme: const InputDecorationTheme(
+            contentPadding: EdgeInsets.fromLTRB(12, 0, 12, 0),
+            isDense: true,
+            isCollapsed: true,
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.black,
+                width: 1,
+              ),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.black,
+                width: 1,
+              ),
             ),
           ),
           textTheme: const TextTheme(

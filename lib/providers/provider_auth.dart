@@ -35,7 +35,7 @@ class ProviderAuth with ChangeNotifier {
     }
     try {
       http.Response response = await functions.httpGet(
-        resourcePath: '/tools/validate-jwt',
+        resourcePath: '/auth/validate-jwt',
         headers: <String, String>{'Authorization': 'Bearer $_jwt'},
       );
       if (response.statusCode != 200) {
@@ -61,7 +61,7 @@ class ProviderAuth with ChangeNotifier {
     required String newPassword,
   }) async {
     try {
-      http.Response response = await functions.httpPost(
+      http.Response response = await functions.httpPut(
         resourcePath: '/user/change-password',
         headers: {
           'Authorization': 'Bearer $_jwt',
@@ -92,7 +92,7 @@ class ProviderAuth with ChangeNotifier {
     }
     try {
       http.Response response = await functions.httpPost(
-        resourcePath: '/user/loginv2',
+        resourcePath: '/auth/loginv2',
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -121,7 +121,7 @@ class ProviderAuth with ChangeNotifier {
   Future<void> logout() async {
     try {
       http.Response response = await functions.httpPost(
-        resourcePath: '/user/logout',
+        resourcePath: '/auth/logout',
         headers: {
           'Authorization': 'Bearer $_jwt',
           'Content-Type': 'application/json; charset=UTF-8',

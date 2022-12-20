@@ -32,11 +32,47 @@ Future<http.Response> httpGet({
 Future<http.Response> httpPost({
   required String resourcePath,
   required Map<String, String> headers,
-  Map<String, String>? body,
+  Map<String, dynamic>? body,
 }) async {
   try {
     final url = Uri.http(await _getUrl(), resourcePath);
     http.Response response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(body),
+    );
+    return response;
+  } catch (e) {
+    return Future.error('[CONNECTION_ERROR]: $e');
+  }
+}
+
+Future<http.Response> httpPut({
+  required String resourcePath,
+  required Map<String, String> headers,
+  Map<String, dynamic>? body,
+}) async {
+  try {
+    final url = Uri.http(await _getUrl(), resourcePath);
+    http.Response response = await http.put(
+      url,
+      headers: headers,
+      body: jsonEncode(body),
+    );
+    return response;
+  } catch (e) {
+    return Future.error('[CONNECTION_ERROR]: $e');
+  }
+}
+
+Future<http.Response> httpDelete({
+  required String resourcePath,
+  required Map<String, String> headers,
+  Map<String, dynamic>? body,
+}) async {
+  try {
+    final url = Uri.http(await _getUrl(), resourcePath);
+    http.Response response = await http.delete(
       url,
       headers: headers,
       body: jsonEncode(body),

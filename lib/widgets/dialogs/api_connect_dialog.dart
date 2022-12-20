@@ -57,6 +57,7 @@ class _ApiConnectDialogState extends State<ApiConnectDialog> {
                     fontSize: 20,
                   ),
                 ),
+                const Divider(),
                 // Body
                 Center(
                   child: Column(

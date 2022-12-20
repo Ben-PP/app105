@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class User {
   late String uid;
   late bool canMakeTransactions;
@@ -8,6 +6,7 @@ class User {
   User({
     required this.uid,
     this.canMakeTransactions = false,
+    this.isAdmin = false,
   });
 
   User.fromMap({required Map<String, dynamic> map}) {

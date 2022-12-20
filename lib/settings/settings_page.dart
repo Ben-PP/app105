@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import '../globals.dart';
 import '../widgets/dialogs/api_connect_dialog.dart';
 import '../widgets/dialogs/change_pwd_dialog.dart';
+import '../widgets/dialogs/add_user_dialog.dart';
 import '../widgets/user_tile.dart';
-import '../objects/user.dart';
 
 import '../providers/provider_api.dart';
 import '../providers/provider_auth.dart';
@@ -66,114 +66,151 @@ class _SettingsPageState extends State<SettingsPage> {
         width: screenWidth,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-          child: Column(
-            children: [
-              // Server Settings
-              // FIXME Localization
-              Text(
-                'Server Info',
-                style: Theme.of(context).textTheme.displayMedium,
-              ),
-              // FIXME Localization
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Text(
-                    'Status: ',
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                  Text(
-                    providerApi.connectionStatus,
-                    style: TextStyle(
-                      color: providerApi.isServerAvailable
-                          ? Colors.green.shade700
-                          : Theme.of(context).colorScheme.error,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Text(
-                    'Server: ',
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                  Text(
-                    providerApi.apiServer,
-                  ),
-                ],
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  providerApi.isServerAvailable
-                      ? providerApi.disconnect()
-                      : showDialog(
-                          context: context,
-                          builder: (context) {
-                            return const ApiConnectDialog();
-                          });
-                },
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // Server Settings
                 // FIXME Localization
-                child: Text(
-                  providerApi.isServerAvailable ? 'Forget' : 'Add Server',
-                ),
-              ),
-
-              // User management
-              if (providerAuth.isAdmin)
-                Text(
-                  // FIXME Localization
-                  'User Management',
-                  style: Theme.of(context).textTheme.displayMedium,
-                ),
-              if (providerUsers.users.isNotEmpty && providerAuth.isAdmin)
                 SizedBox(
-                  height: 150,
-                  child: ListView.builder(
-                    itemCount: providerUsers.users.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: userListItemBuilder,
+                  width: double.infinity,
+                  child: Text(
+                    'Server Info',
+                    style: Theme.of(context).textTheme.displayMedium,
+                    textAlign: TextAlign.left,
                   ),
                 ),
-
-              // Account management
-              Text(
+                const Divider(),
                 // FIXME Localization
-                'Account',
-                style: Theme.of(context).textTheme.displayMedium,
-              ),
-              ElevatedButton(
-                style: !providerApi.isServerAvailable ||
-                        !providerAuth.isAuthenticated
-                    ? Theme.of(context).elevatedButtonTheme.style!.copyWith(
-                          backgroundColor: MaterialStateProperty.all(
-                            Theme.of(context)
-                                .colorScheme
-                                .secondary
-                                .withOpacity(0.5),
-                          ),
-                        )
-                    : null,
-                onPressed: !providerApi.isServerAvailable ||
-                        !providerAuth.isAuthenticated
-                    ? () {}
-                    : () {
-                        showDialog(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Text(
+                      'Status: ',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                    Text(
+                      providerApi.connectionStatus,
+                      style: TextStyle(
+                        color: providerApi.isServerAvailable
+                            ? Colors.green.shade700
+                            : Theme.of(context).colorScheme.error,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Text(
+                      'Server: ',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                    Text(
+                      providerApi.apiServer,
+                    ),
+                  ],
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    providerApi.isServerAvailable
+                        ? providerApi.disconnect()
+                        : showDialog(
                             context: context,
                             builder: (context) {
-                              return const ChangePwdDialog();
+                              return const ApiConnectDialog();
                             });
-                      },
-                // FIXME Localization
-                child: const Text(
-                  'Change Password',
+                  },
+                  // FIXME Localization
+                  child: Text(
+                    providerApi.isServerAvailable ? 'Forget' : 'Add Server',
+                  ),
                 ),
-              ),
-            ],
+
+                // User management
+                if (providerAuth.isAdmin)
+                  Column(
+                    children: [
+                      SizedBox(
+                        width: screenWidth,
+                        child: Text(
+                          // FIXME Localization
+                          'User Management',
+                          style: Theme.of(context).textTheme.displayMedium,
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                      const Divider(),
+                      if (providerUsers.users.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            height: 150,
+                            child: ListView.builder(
+                              itemCount: providerUsers.users.length,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: userListItemBuilder,
+                            ),
+                          ),
+                        ),
+                      ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return const AddUserDialog();
+                              });
+                        },
+                        child: const Text(
+                          // FIXME Localization
+                          'Add User',
+                        ),
+                      ),
+                    ],
+                  ),
+
+                // Account management
+                SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    // FIXME Localization
+                    'Account',
+                    style: Theme.of(context).textTheme.displayMedium,
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                const Divider(),
+                ElevatedButton(
+                  style: !providerApi.isServerAvailable ||
+                          !providerAuth.isAuthenticated
+                      ? Theme.of(context).elevatedButtonTheme.style!.copyWith(
+                            backgroundColor: MaterialStateProperty.all(
+                              Theme.of(context)
+                                  .colorScheme
+                                  .secondary
+                                  .withOpacity(0.5),
+                            ),
+                          )
+                      : null,
+                  onPressed: !providerApi.isServerAvailable ||
+                          !providerAuth.isAuthenticated
+                      ? () {}
+                      : () {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return const ChangePwdDialog();
+                              });
+                        },
+                  // FIXME Localization
+                  child: const Text(
+                    'Change Password',
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
