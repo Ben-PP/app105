@@ -6,4 +6,5 @@ class GlobalSizes {
 
 class GlobalTextChecks {
   static RegExp allowedUidCharacters = RegExp('[a-zA-ZäöÄÖåÅ-]');
+  static RegExp allowedBudgetCharacters = RegExp('[0-9.]');
 }

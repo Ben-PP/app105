@@ -19,11 +19,10 @@ Future<http.Response> httpGet({
 }) async {
   try {
     final url = Uri.http(await _getUrl(), resourcePath);
-    http.Response response = await http.get(
+    return await http.get(
       url,
       headers: headers,
     );
-    return response;
   } catch (e) {
     return Future.error('[CONNECTION_ERROR]: $e');
   }

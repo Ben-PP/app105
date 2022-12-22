@@ -40,8 +40,12 @@ class ProviderAuth with ChangeNotifier {
       );
       if (response.statusCode != 200) {
         _isAuthenticated = false;
+        if (response.statusCode == 409) {
+          _jwt = '';
+          await functions.deleteAppFiles(filePaths: ['/jwt']);
+        }
         notifyListeners();
-        return Future.error('Invalid response.');
+        return;
       }
       var body = jsonDecode(response.body);
       _isAdmin = body['is_admin'];

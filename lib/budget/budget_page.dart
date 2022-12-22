@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../globals.dart';
+import './budget_scale.dart';
+import '../widgets/dialogs/edit_budget_dialog.dart';
+
+import '../providers/provider_auth.dart';
+import '../providers/provider_budgets.dart';
 
 class BudgetPage extends StatefulWidget {
   const BudgetPage({super.key});
@@ -13,6 +19,8 @@ class BudgetPage extends StatefulWidget {
 }
 
 class _BudgetPageState extends State<BudgetPage> {
+  late final ProviderAuth providerAuth;
+  late final ProviderBudgets providerBudgets;
   late final double screenHeight;
   late final double screenWidth;
   var isInitialized = false;
@@ -20,6 +28,9 @@ class _BudgetPageState extends State<BudgetPage> {
   @override
   void didChangeDependencies() {
     if (!isInitialized) {
+      providerAuth = Provider.of<ProviderAuth>(context);
+      providerBudgets = Provider.of<ProviderBudgets>(context);
+      providerBudgets.fetchBudgets(jwt: providerAuth.jwt);
       screenHeight = (MediaQuery.of(context).size.height -
               MediaQuery.of(context).viewPadding.top) -
           (MediaQuery.of(context).size.height -
@@ -46,108 +57,27 @@ class _BudgetPageState extends State<BudgetPage> {
             child: Column(
               children: [
                 // FIXME Localization
-                const Text('Balance'),
-                Container(
-                  color: Colors.black,
-                  height: 10,
-                  width: 2,
-                ),
-                Container(
-                  width: screenWidth * 0.9,
-                  height: screenHeight * 0.05,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: Colors.grey,
+                /*SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    'Balance',
+                    textAlign: TextAlign.left,
+                    style: Theme.of(context).textTheme.displayMedium,
                   ),
-                  clipBehavior: Clip.hardEdge,
-                  // TODO Implement the balance bar
-                  // TODO Add saving target
-                  child: Stack(
-                    children: [
-                      Container(
-                        width: screenWidth * 0.9 * 0.5,
-                        height: double.infinity,
-                        color: Colors.green,
-                      )
-                    ],
-                  ),
+                ),*/
+                // TODO Fetch the numbers
+                BudgetScale(
+                  width: screenWidth * 0.85,
+                  title: 'House hold',
+                  total: providerBudgets.houseBudget?.balance ?? 0,
+                  income: providerBudgets.houseBudget?.totalPositive ?? 0,
                 ),
-                Container(
-                  color: Colors.black,
-                  height: 10,
-                  width: 2,
-                ),
-                const Text('0€'),
-
-                // Static transactions
-                // FIXME Localization
-                const Text('Monthly budget'),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    // Income
-                    SizedBox(
-                      width: screenWidth * 0.3,
-                      child: Column(
-                        children: [
-                          // FIXME Localization
-                          const Text('Income'),
-                          TextField(
-                            keyboardType: TextInputType.number,
-                            textAlign: TextAlign.center,
-                            decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.all(2),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Colors.black,
-                                  width: 1,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Colors.black,
-                                  width: 1,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Expenses
-                    SizedBox(
-                      width: screenWidth * 0.3,
-                      child: Column(
-                        children: [
-                          // FIXME Localization
-                          const Text('Expenses'),
-                          TextField(
-                            keyboardType: TextInputType.number,
-                            textAlign: TextAlign.center,
-                            decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.all(2),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Colors.black,
-                                  width: 1,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Colors.black,
-                                  width: 1,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                // TODO Fetch the numbers
+                BudgetScale(
+                  width: screenWidth * 0.85,
+                  title: 'Personal',
+                  total: (providerBudgets.privateBudget?.balance ?? 0),
+                  income: providerBudgets.privateBudget?.totalPositive ?? 0,
                 ),
                 ElevatedButton(
                   style: ButtonStyle(
@@ -156,39 +86,32 @@ class _BudgetPageState extends State<BudgetPage> {
                     ),
                   ),
                   onPressed: () {
-                    // TODO Save income/expenses
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return EditBudgetDialog(
+                            personalBudget: providerBudgets.privateBudget,
+                            publicBudget: providerBudgets.publicBudget,
+                          );
+                        });
                   },
                   child: Text(
                     // FIXME Localization
-                    'Save Income/Expenses',
+                    'Edit Budget',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onSecondary,
                     ),
                   ),
                 ),
 
-                // TODO Add ability to add quick transactions
-                // Saved transactions
+                // Static transactions
                 // FIXME Localization
-                const Text('Quick Transactions'),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                        Theme.of(context).colorScheme.secondary,
-                      ),
-                    ),
-                    onPressed: () {
-                      // TODO Manage quick transactions
-                    },
-                    child: Text(
-                      // FIXME Localization
-                      'Manage',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSecondary,
-                      ),
-                    ),
+                SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    'Transactions',
+                    textAlign: TextAlign.left,
+                    style: Theme.of(context).textTheme.displayMedium,
                   ),
                 ),
                 // TODO Add gridview for quick transactions
